@@ -31,7 +31,7 @@ const LeetCodeStats: React.FC = () => {
   useEffect(() => {
     const fetchStats = async () => {
       const username = "h4rsh01";
-      const CACHE_KEY = `leetcode_stats_${username}`;
+      const CACHE_KEY = `leetcode_stats_v2_${username}`;
       const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
       
       try {
@@ -83,7 +83,7 @@ const LeetCodeStats: React.FC = () => {
 
         // Enhancement: Fetch Contest Data (Non-critical)
         try {
-          const res = await fetch(`https://alfa-leetcode-api.onrender.com/userContestRanking/${username}`, { signal: controller.signal });
+          const res = await fetch(`https://alfa-leetcode-api.onrender.com/${username}/contest`, { signal: controller.signal });
           if (res.ok) {
             const data = await res.json();
             if (data && (data.contestRating || data.rating)) {
@@ -187,7 +187,6 @@ const LeetCodeStats: React.FC = () => {
           value={Math.round(stats.contestRating)}
           sub={stats.contestAttend > 0 ? `${stats.contestAttend} Contests Attended` : "Ranking Pending"}
           inView={inView}
-          accent={stats.contestRating > 0}
         />
 
         <DashboardCard 
@@ -208,9 +207,9 @@ const LeetCodeStats: React.FC = () => {
            </div>
            
            <div className="space-y-6">
-              <ProgressItem label="Easy" count={stats.easySolved} total={stats.totalSolved} color="bg-cyan" delay={0} />
-              <ProgressItem label="Medium" count={stats.mediumSolved} total={stats.totalSolved} color="bg-cyan/60" delay={0.1} />
-              <ProgressItem label="Hard" count={stats.hardSolved} total={stats.totalSolved} color="bg-cyan/30" delay={0.2} />
+              <ProgressItem label="Easy" count={stats.easySolved} total={stats.totalSolved} color="bg-green" delay={0} />
+              <ProgressItem label="Medium" count={stats.mediumSolved} total={stats.totalSolved} color="bg-amber" delay={0.1} />
+              <ProgressItem label="Hard" count={stats.hardSolved} total={stats.totalSolved} color="bg-red" delay={0.2} />
            </div>
         </div>
       </div>

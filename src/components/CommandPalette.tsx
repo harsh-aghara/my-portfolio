@@ -14,7 +14,7 @@ const commands = [
   { icon: '→', label: 'Contact', sub: '#contact', action: () => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }) },
   { icon: '↗', label: 'GitHub', sub: '@Retr01-sudo', action: () => window.open('https://github.com/Retr01-sudo', '_blank') },
   { icon: '↗', label: 'LinkedIn', sub: 'Harsh Aghara', action: () => window.open('https://linkedin.com/in/harsh-aghara', '_blank') },
-  { icon: '@', label: 'Email', sub: 'harsh@example.com', action: () => window.location.href = 'mailto:harsh@example.com' },
+  { icon: '@', label: 'Email', sub: 'harsh.aghara44@gmail.com', action: () => window.location.href = 'mailto:harsh.aghara44@gmail.com' },
 ];
 
 const CommandPalette: React.FC<Props> = ({ open, onClose }) => {
