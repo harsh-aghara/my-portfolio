@@ -1,0 +1,17 @@
+export const termLines = [
+  { text: 'harsh@arch:~$ neofetch --minimal', delay: 11, cls: 'p' },
+  { text: '──────────────────────────', delay: 11, cls: 'dim' },
+  { text: 'OS      Arch Linux x86_64', delay: 40, cls: 't1' },
+  { text: 'Kernel  6.8.1-arch1-1', delay: 40, cls: 't1' },
+  { text: 'Shell   zsh 5.9', delay: 40, cls: 't1' },
+  { text: 'Editor  Neovim', delay: 40, cls: 't1' },
+  { text: 'CGPA    8.73 / 10', delay: 40, cls: 'hi' },
+  { text: 'JEE     98.9 percentile', delay: 40, cls: 'hi' },
+  { text: '──────────────────────────', delay: 11, cls: 'dim' },
+  { text: 'harsh@arch:~$ uptime --infra', delay: 11, cls: 'p' },
+  { text: '  yoink!      ● running   1459 req/s', delay: 50, cls: 'ok' },
+  { text: '  redis       ● running   v7.2.4', delay: 50, cls: 'ok' },
+  { text: '  postgres    ● running   v16', delay: 50, cls: 'ok' },
+  { text: '  prometheus  ● running   ×3 nodes', delay: 50, cls: 'ok' },
+  { text: '  java        ● loading   learning', delay: 50, cls: 'warn' },
+];
