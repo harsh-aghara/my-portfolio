@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  ::selection {
+    @apply bg-cyan/30 text-t0;
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 120px;
+  }
+  body {
+    @apply bg-bg text-t0 font-sans;
+    background-image: 
+      radial-gradient(circle at 2px 2px, rgba(255,255,255,0.02) 1px, transparent 0);
+    background-size: 40px 40px;
+  }
+
+  /* Accessibility: Visible Focus Rings */
+  a:focus-visible, button:focus-visible, input:focus-visible {
+    @apply outline-none ring-2 ring-cyan ring-offset-2 ring-offset-bg;
+  }
+}
+
+@layer utilities {
+  .border-line {
+    @apply border-white/[0.07];
+  }
+  .border-line-hover:hover {
+    @apply border-white/[0.13];
+  }
+}
+
+@keyframes cblink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+.animate-cblink {
+  animation: cblink steps(1) 0.75s infinite;
+}
+
+.animate-blink {
+  animation: blink 2s infinite;
+}
+
+.animate-dash {
+  animation: dash 20s linear infinite;
+}
+
+/* Utility to hide scrollbar but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-t3;
+}
