@@ -84,7 +84,7 @@ const CommandPalette: React.FC<Props> = ({ open, onClose }) => {
             initial={{ scale: 0.95, y: -20 }}
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.95, y: -20 }}
-            className="w-[520px] bg-bg2 border border-white/[0.07] rounded-xl shadow-2xl overflow-hidden"
+            className="w-[calc(100%-2rem)] max-w-[520px] bg-bg2 border border-white/[0.07] rounded-xl shadow-2xl overflow-hidden"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center px-4 h-14 border-b border-white/[0.05]">

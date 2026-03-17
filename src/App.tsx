@@ -11,12 +11,12 @@ import ContactSection from './components/ContactSection';
 import CommandPalette from './components/CommandPalette';
 
 const App: React.FC = () => {
-  const { open: cmdOpen, close: closeCmd } = useCommandPalette();
+  const { open: cmdOpen, close: closeCmd, toggle: toggleCmd } = useCommandPalette();
   const activeSection = useScrollSpy(['home', 'projects', 'leetcode', 'stack', 'about', 'contact']);
 
   return (
     <div className="bg-bg min-h-screen relative">
-      <Nav activeSection={activeSection} />
+      <Nav activeSection={activeSection} onMenuClick={toggleCmd} />
       <CommandPalette open={cmdOpen} onClose={closeCmd} />
       
       <main className="max-w-[1440px] mx-auto relative z-10">

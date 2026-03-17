@@ -182,7 +182,7 @@ const Hero: React.FC = () => {
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
           className="lg:col-span-5 relative group"
         >
-          <div className="aspect-square bg-white/[0.03] border border-white/[0.06] rounded-[2.5rem] overflow-hidden backdrop-blur-[12px] p-10 flex flex-col justify-between shadow-2xl">
+          <div className="aspect-square bg-white/[0.03] border border-white/[0.06] rounded-[2.5rem] overflow-hidden backdrop-blur-[12px] p-6 md:p-10 flex flex-col justify-between shadow-2xl">
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
                   <div className="text-[10px] text-t3 uppercase tracking-widest font-mono font-bold">Engineer Stats</div>
