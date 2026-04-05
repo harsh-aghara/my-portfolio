@@ -1,6 +1,5 @@
 import React from 'react';
 import { useScrollSpy } from './hooks/useScrollSpy';
-import { useCommandPalette } from './hooks/useCommandPalette';
 import Nav from './components/Nav';
 import Hero from './components/Hero';
 import ProjectsSection from './components/ProjectsSection';
@@ -8,17 +7,14 @@ import StackSection from './components/StackSection';
 import LeetCodeStats from './components/LeetCodeStats';
 import AboutSection from './components/AboutSection';
 import ContactSection from './components/ContactSection';
-import CommandPalette from './components/CommandPalette';
 
 const App: React.FC = () => {
-  const { open: cmdOpen, close: closeCmd, toggle: toggleCmd } = useCommandPalette();
   const activeSection = useScrollSpy(['home', 'projects', 'leetcode', 'stack', 'about', 'contact']);
 
   return (
     <div className="bg-bg min-h-screen relative">
-      <Nav activeSection={activeSection} onMenuClick={toggleCmd} />
-      <CommandPalette open={cmdOpen} onClose={closeCmd} />
-      
+      <Nav activeSection={activeSection} />
+
       <main className="max-w-[1440px] mx-auto relative z-10">
         <Hero />
         <div className="space-y-16 pb-32">

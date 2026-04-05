@@ -1,13 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Menu } from 'lucide-react';
 
 interface Props {
   activeSection: string;
-  onMenuClick?: () => void;
 }
 
-const Nav: React.FC<Props> = ({ activeSection, onMenuClick }) => {
+const Nav: React.FC<Props> = ({ activeSection }) => {
   const navLinks = [
     { href: '#projects', label: 'Projects' },
     { href: '#leetcode', label: 'LeetCode' },
@@ -59,22 +57,12 @@ const Nav: React.FC<Props> = ({ activeSection, onMenuClick }) => {
         })}
       </div>
 
-      <div className="flex items-center gap-3 md:gap-4">
-        {onMenuClick && (
-          <button 
-            onClick={onMenuClick} 
-            className="md:hidden w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-white/5 transition-colors"
-          >
-            <Menu size={16} />
-          </button>
-        )}
-        <a 
-          href="#contact" 
-          className="h-8 px-4 rounded-full bg-white text-black text-[11px] font-bold uppercase tracking-wider hover:bg-zinc-200 transition-colors flex items-center"
-        >
-          Hire me
-        </a>
-      </div>
+      <a
+        href="#contact"
+        className="h-8 px-4 rounded-full bg-white text-black text-[11px] font-bold uppercase tracking-wider hover:bg-zinc-200 transition-colors flex items-center"
+      >
+        Hire me
+      </a>
     </nav>
   );
 };
