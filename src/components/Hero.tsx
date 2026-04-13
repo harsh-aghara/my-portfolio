@@ -18,8 +18,8 @@ function useRotatingTaglines(taglines: string[], intervalMs = 4000): number {
 }
 
 // ── Cache Configuration ──────────────────────────────────────────────
-const CACHE_KEY = 'github_stats_v6';
-const CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
+const CACHE_KEY = 'github_stats_v7';
+const CACHE_TTL = 1 * 60 * 60 * 1000; // 1 hour
 const GITHUB_USERNAME = 'harsh-aghara';
 
 // Fallbacks — only shown when cache is empty AND API is unreachable.
@@ -96,11 +96,11 @@ interface CachedData {
   ts: number;
 }
 
-async function loadStats(): Promise<{ stats: CachedData; fresh: boolean }> {
+async function loadStats(forceFetch = false): Promise<{ stats: CachedData; fresh: boolean }> {
   // 1. Cache hit — serve immediately, no API call
   try {
     const raw = localStorage.getItem(CACHE_KEY);
-    if (raw) {
+    if (raw && !forceFetch) {
       const parsed = JSON.parse(raw) as CachedData;
       if (parsed.repos > 0 && Date.now() - parsed.ts < CACHE_TTL) {
         return { stats: parsed, fresh: true };
@@ -264,7 +264,7 @@ const Hero: React.FC = () => {
 
       if (!fresh) {
         try {
-          const { stats: freshData } = await loadStats();
+          const { stats: freshData } = await loadStats(true);
           if (!cancelled) {
             setRepos(freshData.repos);
             setStars(freshData.stars);

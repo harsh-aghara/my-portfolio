@@ -31,9 +31,10 @@ const LeetCodeStats: React.FC = () => {
   useEffect(() => {
     const fetchStats = async () => {
       const username = "h4rsh01";
-      const CACHE_KEY = `leetcode_stats_v2_${username}`;
-      const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+      const CACHE_KEY = `leetcode_stats_v3_${username}`;
+      const CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
       
+      let staleData = null;
       try {
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
@@ -41,8 +42,11 @@ const LeetCodeStats: React.FC = () => {
           if (Date.now() - timestamp < CACHE_TTL) {
             setStats(data);
             setLoading(false);
-            return; // Use the cache and skip the fetch completely
+            return; // Fresh cache
           }
+          staleData = data;
+          setStats(data); // Show stale data immediately
+          setLoading(false);
         }
       } catch (e) {
         console.warn("Cache read error:", e);
@@ -119,12 +123,12 @@ const LeetCodeStats: React.FC = () => {
           } catch (e) {
             console.warn("Cache save error:", e);
           }
-        } else {
+        } else if (!staleData) {
           throw new Error('All telemetry sources failed');
         }
       } catch (err) {
         console.error("Telemetry Error:", err);
-        setError(true);
+        if (!staleData) setError(true);
       } finally {
         setLoading(false);
         clearTimeout(timeoutId);
