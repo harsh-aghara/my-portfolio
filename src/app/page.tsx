@@ -44,8 +44,8 @@ export default function HomePage() {
         {/* ── Creative Introduction (Taste-Skill Typography) ───── */}
         <section className="mx-auto max-w-[1120px] px-6 py-32 sm:px-8 lg:px-12 lg:py-48">
           <ScrollReveal>
-            <div className="max-w-[900px]">
-              <h1 className="text-[14vw] font-black leading-[0.85] tracking-[-0.04em] uppercase text-text-primary sm:text-[120px] lg:text-[160px]">
+            <div className="max-w-[900px] break-words">
+              <h1 className="text-[11vw] sm:text-[120px] lg:text-[160px] font-black leading-[0.85] tracking-[-0.04em] uppercase text-text-primary">
                 HARSH<br />AGHARA
               </h1>
             </div>

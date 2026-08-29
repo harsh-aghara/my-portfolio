@@ -32,7 +32,7 @@ export default function PeekingTux() {
   }, []);
 
   return (
-    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-4 z-50 pointer-events-auto">
+    <div className="hidden md:block absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-4 z-50 pointer-events-none">
       <svg
         width="216"
         height="162"

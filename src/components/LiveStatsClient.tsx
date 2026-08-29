@@ -53,7 +53,7 @@ export default function LiveStatsClient({ stats }: { stats: StatData[] }) {
   }, [stats]);
 
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
       {stats.map((stat) => {
         // Use server value, or cached value, or fallback to null (which triggers funny message)
         const finalValue = stat.value !== null ? stat.value : (cachedStats[stat.fallbackKey] ?? null);
