@@ -1,0 +1,19 @@
+---
+title: "Checkmate (contributor)"
+subtitle: "Open-source infrastructure monitoring, 10,000+ stars"
+date: "2026-08-15"
+stack: ["Node.js", "React", "BullMQ", "TypeScript", "MongoDB", "Zod"]
+github: "https://github.com/bluewave-labs/checkmate"
+metrics:
+  - { value: "2 PRs", label: "merged" }
+  - { value: "10k+", label: "repo stars" }
+excerpt: "Two merged PRs on a 10k+ star monitoring tool: job-queue sync and status-resolution edge cases."
+---
+
+## PR #3626: Bulk pause/resume for monitor fleets
+
+Managing large fleets of monitors required tedious individual toggling. I implemented a bulk pause/resume feature that orchestrates state changes across multiple monitors simultaneously. This involved writing BullMQ orchestration logic to safely pause active background jobs without dropping data. I built reusable React hooks for the frontend interface and validated the new REST endpoints. I also wrote comprehensive unit tests to ensure the job-queue synchronization recovered gracefully from partial-failure states.
+
+## PR #3690: Custom status-code support
+
+The existing status-resolution layer assumed any non-2xx HTTP response meant a service was down. I contributed custom status-code support, allowing users to configure specific HTTP monitors to treat codes like 401 (Unauthorized) or Cloudflare 52x errors as an UP status. This required modifying the core status-resolution logic across both HTTP and global-ping checks. I implemented strict Zod schema validation to handle the new configuration parameters and added unit tests to verify the edge cases.

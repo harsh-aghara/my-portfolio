@@ -1,0 +1,23 @@
+---
+title: "SPMS"
+subtitle: "Student Project Management System (Campus intern, IIIT Pune, May-Jul 2026)"
+date: "2026-07-30"
+stack: ["Node.js", "Express", "React"]
+github: "https://github.com/harsh-aghara/Student-Project-Management-System-IIITP"
+metrics:
+  - { value: "57%", label: "p95 reduction" }
+  - { value: "97.52 to 42.22ms", label: "p95 before/after" }
+excerpt: "Cut a production dashboard's p95 latency 57% by parallelizing 20+ sequential queries."
+---
+
+## Production deployment blockers
+
+Taking SPMS from local development to a production environment exposed several systemic issues. The initial deployment failed due to cross-origin resource sharing (CORS) misconfigurations between the frontend and backend services. I resolved the CORS headers, standardized the Vite environment variables to differentiate between staging and production contexts, and hardened the OTP authentication flow to prevent rate-limit bypassing. 
+
+## Query parallelization
+
+The main project dashboard suffered from unacceptable load times. Profiling the API revealed that the endpoint was executing over 20 sequential database queries to aggregate student data, project status, and faculty approvals. I rewrote the data fetching logic to execute independent queries concurrently using Promise.all. I verified the performance gains with a custom benchmarking script. This parallelization cut the p95 latency by 57%, dropping response times from 97.52ms to 42.22ms.
+
+## Email migration and CI workflow
+
+The system originally relied on Nodemailer with a basic SMTP configuration, which suffered from high bounce rates and frequent throttling. I migrated the email service to the Brevo API, establishing reliable transactional email delivery for project approval notifications. Finally, I set up a continuous integration workflow to automate testing and build validation, ensuring that subsequent pull requests maintained system stability.

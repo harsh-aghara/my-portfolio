@@ -1,70 +1,164 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+"use client";
 
-interface Props {
-  activeSection: string;
-}
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { List, X } from "@phosphor-icons/react/dist/ssr";
+import { motion, AnimatePresence, useReducedMotion, useScroll, useMotionValueEvent } from "motion/react";
 
-const Nav: React.FC<Props> = ({ activeSection }) => {
-  const navLinks = [
-    { href: '#projects', label: 'Projects' },
-    { href: '#leetcode', label: 'LeetCode' },
-    { href: '#stack', label: 'Stack' },
-    { href: '#about', label: 'About' },
-    { href: '#contact', label: 'Contact' },
-  ];
+const links = [
+  { href: "/work", label: "Work" },
+  { href: "/writing", label: "Writing" },
+  { href: "/about", label: "About" },
+];
 
-  // Set this to your photo URL (e.g., '/images/harsh.jpg') to use a photo instead of initials
-  const PROFILE_PHOTO_URL = ""; 
+export default function Nav() {
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const reduce = useReducedMotion();
+  const { scrollY } = useScroll();
+  
+  // Hide nav by default on home page, show on other pages
+  const [showNav, setShowNav] = useState(pathname !== "/");
+
+  useEffect(() => {
+    if (pathname === "/") {
+      setShowNav(window.scrollY > window.innerHeight * 0.4);
+    } else {
+      setShowNav(true);
+    }
+  }, [pathname]);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    if (pathname === "/") {
+      setShowNav(latest > window.innerHeight * 0.4);
+    } else {
+      setShowNav(true);
+    }
+  });
 
   return (
-    <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-5xl h-14 bg-white/[0.03] backdrop-blur-xl border border-white/10 z-[500] px-4 sm:px-8 rounded-full flex items-center justify-between shadow-2xl">
-      <div className="flex items-center gap-3">
-        {PROFILE_PHOTO_URL ? (
-          <img 
-            src={PROFILE_PHOTO_URL} 
-            alt="Harsh Aghara" 
-            className="w-8 h-8 rounded-full border border-white/10 object-cover shadow-sm transition-opacity hover:opacity-80"
-          />
-        ) : (
-          <div className="w-8 h-8 rounded-full bg-white/[0.05] border border-white/10 flex items-center justify-center text-white font-mono font-bold text-[10px] tracking-wider shadow-sm transition-colors hover:bg-white/10 hover:border-white/20">
-            HA
-          </div>
-        )}
-        <div className="text-white font-bold text-sm tracking-tight hidden sm:block">Harsh Aghara</div>
-      </div>
-      
-      <div className="hidden md:flex gap-8">
-        {navLinks.map((link) => {
-          const isActive = activeSection === link.href.slice(1);
-          return (
-            <a
-              key={link.href}
-              href={link.href}
-              className={`relative text-[11px] font-bold uppercase tracking-widest transition-colors duration-300 ${
-                isActive ? 'text-cyan' : 'text-t3 hover:text-white'
-              }`}
-            >
-              {link.label}
-              {isActive && (
-                <motion.div 
-                  layoutId="nav-underline"
-                  className="absolute -bottom-1 left-0 w-full h-0.5 bg-cyan"
-                />
-              )}
-            </a>
-          );
-        })}
-      </div>
-
-      <a
-        href="#contact"
-        className="h-8 px-4 rounded-full bg-white text-black text-[11px] font-bold uppercase tracking-wider hover:bg-zinc-200 transition-colors flex items-center"
-      >
-        Hire me
+    <>
+      <a href="#main" className="skip-link">
+        Skip to content
       </a>
-    </nav>
-  );
-};
+      
+      <AnimatePresence>
+        {showNav && (
+          <motion.nav 
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -100, opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-border-default bg-bg-primary/90 backdrop-blur-xl backdrop-saturate-150"
+          >
+            <div className="mx-auto flex h-full max-w-[1120px] items-center justify-between px-6 sm:px-8 lg:px-12">
+              <Link
+                href="/"
+                className="text-[15px] font-medium text-text-primary transition-colors duration-150 hover:text-accent"
+              >
+                Harsh Aghara
+              </Link>
 
-export default Nav;
+              {/* Desktop nav */}
+              <div className="hidden items-center gap-8 lg:flex">
+                {links.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`text-[15px] font-medium transition-colors duration-150 ${
+                      pathname.startsWith(link.href)
+                        ? "text-text-primary"
+                        : "text-text-secondary hover:text-text-primary"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <a
+                  href="mailto:harsh.aghara44@gmail.com"
+                  className="text-[15px] font-medium text-accent transition-colors duration-150 hover:text-accent-hover"
+                >
+                  Get in touch
+                </a>
+              </div>
+
+              {/* Mobile hamburger */}
+              <button
+                onClick={() => setOpen(true)}
+                className="flex h-12 w-12 items-center justify-center rounded-full text-text-secondary lg:hidden"
+                aria-label="Open menu"
+              >
+                <List size={24} />
+              </button>
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile overlay */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={reduce ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-bg-primary lg:hidden"
+          >
+            <button
+              onClick={() => setOpen(false)}
+              className="absolute right-6 top-5 flex h-12 w-12 items-center justify-center rounded-full text-text-secondary"
+              aria-label="Close menu"
+            >
+              <X size={24} />
+            </button>
+            <div className="flex flex-col items-center gap-10">
+              {links.map((link, i) => (
+                <motion.div
+                  key={link.href}
+                  initial={reduce ? false : { opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: i * 0.04,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                >
+                  <Link
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className={`text-[22px] font-medium transition-colors duration-150 ${
+                      pathname.startsWith(link.href)
+                        ? "text-text-primary"
+                        : "text-text-secondary hover:text-text-primary"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </motion.div>
+              ))}
+              <motion.div
+                initial={reduce ? false : { opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.4,
+                  delay: links.length * 0.04,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+              >
+                <a
+                  href="mailto:harsh.aghara44@gmail.com"
+                  className="text-[22px] font-medium text-accent transition-colors duration-150 hover:text-accent-hover"
+                  onClick={() => setOpen(false)}
+                >
+                  Get in touch
+                </a>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
