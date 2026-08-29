@@ -9,8 +9,15 @@ const nextConfig = {
   pageExtensions: ['ts', 'tsx', 'md', 'mdx'],
   images: {
     formats: ['image/avif', 'image/webp'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.simpleicons.org',
+      },
+    ],
   },
   outputFileTracingRoot: path.join(__dirname, './'),
 };
 
 export default nextConfig;
+

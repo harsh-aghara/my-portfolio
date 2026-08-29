@@ -5,30 +5,13 @@ import ScrollReveal from "@/components/ScrollReveal";
 import AsciiHero from "@/components/AsciiHero";
 import LiveStats from "@/components/LiveStats";
 import TechStack from "@/components/TechStack";
+import { projectDisplay, featuredSlugs } from "@/lib/project-display";
 
-const featuredProjects = [
-  {
-    name: "Yoink",
-    hook: "Flash-sale engine rebuilt 4 times to kill race conditions under 1,000+ concurrent users.",
-    metricValue: "7.6ms",
-    metricLabel: "p95 latency",
-    href: "/work/yoink",
-  },
-  {
-    name: "Checkmate",
-    hook: "Two merged PRs on a 10k+ star monitoring tool: job-queue sync and status-resolution edge cases.",
-    metricValue: "10k+",
-    metricLabel: "stars",
-    href: "/work/checkmate",
-  },
-  {
-    name: "SPMS",
-    hook: "Cut a production dashboard's p95 latency 57% by parallelizing 20+ sequential queries.",
-    metricValue: "57%",
-    metricLabel: "p95 reduction",
-    href: "/work/spms",
-  },
-];
+const featuredProjects = featuredSlugs.map((slug) => ({
+  ...projectDisplay[slug],
+  href: `/work/${slug}`,
+}));
+
 
 export default function HomePage() {
   return (

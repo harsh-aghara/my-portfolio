@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "motion/react";
 import { Queue } from "@phosphor-icons/react/dist/ssr";
 
@@ -48,10 +49,13 @@ export default function TechStack() {
                   {tech.slug === "bullmq" ? (
                     <Queue weight="duotone" size={20} className="text-accent opacity-80 group-hover:opacity-100 transition-opacity shrink-0" />
                   ) : (
-                    <img 
+                    <Image 
                       src={`https://cdn.simpleicons.org/${tech.slug}${tech.slug === 'nextdotjs' ? '/white' : ''}`} 
                       alt={tech.name}
-                      className="h-5 w-5 opacity-80 transition-opacity hover:opacity-100 shrink-0"
+                      width={20}
+                      height={20}
+                      className="opacity-80 transition-opacity hover:opacity-100 shrink-0"
+                      unoptimized
                     />
                   )}
                   <span className="leading-relaxed mb-[2px]">{tech.name}</span>

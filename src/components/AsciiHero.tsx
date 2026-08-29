@@ -248,7 +248,7 @@ export default function AsciiHero() {
   return (
     <motion.div 
       ref={containerRef}
-      style={{ y, opacity } as any}
+      style={{ y, opacity }}
       className={`relative h-[100vh] w-full overflow-hidden bg-bg-primary transition-opacity duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"}`}
     >
       {/* Background Monochromatic Canvas */}

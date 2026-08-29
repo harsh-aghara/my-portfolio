@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getAllWork } from "@/lib/content";
+import { projectDisplay } from "@/lib/project-display";
 import ProjectRow from "@/components/ProjectRow";
 import ScrollReveal from "@/components/ScrollReveal";
 
@@ -11,32 +12,6 @@ export const metadata: Metadata = {
 
 export default function WorkPage() {
   const projects = getAllWork();
-
-  const projectDisplay: Record<
-    string,
-    { hook: string; metricValue: string; metricLabel: string }
-  > = {
-    yoink: {
-      hook: "Flash-sale engine rebuilt 4 times to kill race conditions under 1,000+ concurrent users.",
-      metricValue: "7.6ms",
-      metricLabel: "p95 latency",
-    },
-    oceanwatch: {
-      hook: "Replaced full-table scans with GIST-indexed PostGIS queries as report volume scaled.",
-      metricValue: "O(n) to sub-linear",
-      metricLabel: "query improvement",
-    },
-    spms: {
-      hook: "Cut a production dashboard's p95 latency 57% by parallelizing 20+ sequential queries.",
-      metricValue: "57%",
-      metricLabel: "p95 reduction",
-    },
-    checkmate: {
-      hook: "Two merged PRs on a 10k+ star monitoring tool: job-queue sync and status-resolution edge cases.",
-      metricValue: "10k+",
-      metricLabel: "stars",
-    },
-  };
 
   return (
     <section className="mx-auto max-w-[1120px] px-6 py-24 sm:px-8 lg:px-12">

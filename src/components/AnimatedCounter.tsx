@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { motion, useSpring, useTransform } from "motion/react";
 
 interface AnimatedCounterProps {
@@ -10,7 +10,6 @@ interface AnimatedCounterProps {
 }
 
 export default function AnimatedCounter({ from, to, delay = 0 }: AnimatedCounterProps) {
-  const [hasAnimated, setHasAnimated] = useState(false);
   const spring = useSpring(from, {
     mass: 1,
     stiffness: 75,
@@ -22,7 +21,6 @@ export default function AnimatedCounter({ from, to, delay = 0 }: AnimatedCounter
   useEffect(() => {
     const timer = setTimeout(() => {
       spring.set(to);
-      setHasAnimated(true);
     }, delay * 1000);
     
     return () => clearTimeout(timer);
