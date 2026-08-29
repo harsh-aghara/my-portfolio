@@ -22,8 +22,5 @@ npm run dev
 
 Then open [http://localhost:3000](http://localhost:3000) and bask in the console logs.
 
-## Known Issues (aka "It's not a bug, it's a feature")
-- **`npm audit` is yelling about PostCSS vulnerabilities** via Next.js 15's internally bundled `postcss@8.4.31`. It's a Next.js internal dependency problem. The fix requires Next 16, which would break things. So, we peacefully ignore it. (The project's actual PostCSS via Tailwind is fully patched).
-
 ## License
 [MIT](LICENSE) - Do whatever you want with it, just don't steal my face.
