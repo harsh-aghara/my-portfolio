@@ -1,4 +1,4 @@
-# harsh-portfolio ¯\_(ツ)_/¯
+# harsh-portfolio   ¯\\_(ツ)_/¯
 
 *Really, you need a README for a portfolio repo too??* I mean, it's a portfolio. You click the link, you look at the site, you hire me. Simple.
 
