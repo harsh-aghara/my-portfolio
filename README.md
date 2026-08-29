@@ -23,4 +23,4 @@ npm run dev
 Then open [http://localhost:3000](http://localhost:3000) and bask in the console logs.
 
 ## License
-[MIT](LICENSE) - Do whatever you want with it, just don't steal my face.
+[MIT](LICENSE)
