@@ -4,20 +4,25 @@ subtitle: "Student Project Management System (Campus intern, IIIT Pune, May-Jul 
 date: "2026-07-30"
 stack: ["Node.js", "Express", "React"]
 github: "https://github.com/harsh-aghara/Student-Project-Management-System-IIITP"
+url: "https://student-project-management-system-i.vercel.app"
 metrics:
   - { value: "57%", label: "p95 reduction" }
   - { value: "97.52 to 42.22ms", label: "p95 before/after" }
-excerpt: "Cut a production dashboard's p95 latency 57% by parallelizing 20+ sequential queries."
+excerpt: "Internal tool at IIIT Pune for managing student projects across semesters. I took it from local dev to production and cut the main dashboard's p95 latency by 57%."
 ---
 
-## Production deployment blockers
+## What this is
 
-Taking SPMS from local development to a production environment exposed several systemic issues. The initial deployment failed due to cross-origin resource sharing (CORS) misconfigurations between the frontend and backend services. I resolved the CORS headers, standardized the Vite environment variables to differentiate between staging and production contexts, and hardened the OTP authentication flow to prevent rate-limit bypassing. 
+SPMS is a web application used internally at IIIT Pune to manage the entire lifecycle of student projects. Students submit project proposals, faculty review and approve them, and administrators oversee everything across different semesters and project types. The system handles role-based workflows for all three user types. I worked on this during a campus internship from May to July 2026.
+
+## Getting it to production
+
+The system worked fine in local development, but the initial production deployment fell over immediately. CORS was misconfigured between the frontend and backend services, the Vite environment variables weren't set up to distinguish between staging and production, and the OTP authentication flow had a gap that allowed rate-limit bypassing. I fixed all of these before the system could serve real users.
 
 ## Query parallelization
 
-The main project dashboard suffered from unacceptable load times. Profiling the API revealed that the endpoint was executing over 20 sequential database queries to aggregate student data, project status, and faculty approvals. I rewrote the data fetching logic to execute independent queries concurrently using Promise.all. I verified the performance gains with a custom benchmarking script. This parallelization cut the p95 latency by 57%, dropping response times from 97.52ms to 42.22ms.
+The main project dashboard was painfully slow. I profiled the API and found that the endpoint was running over 20 sequential database queries to pull together student data, project status, and faculty approvals. Each query waited for the previous one to finish even though most of them were independent. I rewrote the data fetching to fire independent queries concurrently with Promise.all and verified the improvement with a benchmarking script. The p95 latency dropped 57%, from 97.52ms down to 42.22ms.
 
-## Email migration and CI workflow
+## Email and CI
 
-The system originally relied on Nodemailer with a basic SMTP configuration, which suffered from high bounce rates and frequent throttling. I migrated the email service to the Brevo API, establishing reliable transactional email delivery for project approval notifications. Finally, I set up a continuous integration workflow to automate testing and build validation, ensuring that subsequent pull requests maintained system stability.
+The original email setup used Nodemailer with basic SMTP, which had high bounce rates and kept getting throttled. I migrated to the Brevo API for transactional emails (project approval notifications, OTP delivery). I also set up a CI workflow to automate testing and build validation on pull requests so the system stayed stable as the team continued to ship.

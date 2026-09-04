@@ -68,9 +68,8 @@ export default function AboutPage() {
 
         <ScrollReveal delay={0.24}>
           <p>
-            Right now I'm exploring Kubernetes-ecosystem open source through
-            CNCF/LFX mentorship programs, alongside continuing work on
-            Checkmate.
+            Right now I'm exploring Kubernetes-ecosystem open source alongside
+            continuing work on Checkmate.
           </p>
         </ScrollReveal>
       </div>

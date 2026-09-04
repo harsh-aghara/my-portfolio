@@ -7,17 +7,21 @@ github: "https://github.com/harsh-aghara/OceanWatch"
 metrics:
   - { value: "O(n) to sub-linear", label: "query complexity" }
   - { value: "7 tables", label: "transactional integrity" }
-excerpt: "Replaced full-table scans with GIST-indexed PostGIS queries as report volume scaled."
+excerpt: "A full-stack geospatial platform for reporting and tracking coastal hazards in real time, built on Next.js, Express, and PostGIS."
 ---
+
+## What this is
+
+OceanWatch is a full-stack web application that lets citizens and local authorities report, map, and track coastal and oceanic hazards in real time. Users can submit hazard reports pinned to a map location, and the platform aggregates everything into an interactive map interface. The frontend is built with Next.js and React, the backend runs on Express with JWT-based authentication, and the data layer is PostgreSQL with PostGIS for spatial queries. The whole stack is containerized with Docker.
 
 ## The scaling problem
 
-OceanWatch allows users to report coastal hazards. As the volume of reports grew, the map interface became noticeably sluggish. The root cause was the API endpoint serving the viewport data. Every time a user panned the map, the system ran full-table scans to find hazard reports within the new bounding box. This O(n) operation degraded performance directly in proportion to the total number of reports in the database, causing significant latency for simple map interactions.
+As the number of reports in the database grew, the map interface started getting noticeably slow. Every time a user panned or zoomed, the API endpoint serving viewport data was running full-table scans to find hazard reports within the new bounding box. That's an O(n) operation that degrades linearly with the total report count, so it got worse as the platform got more usage.
 
 ## PostGIS + GIST index solution
 
-I migrated the spatial queries to leverage PostGIS. By adding a geometry column and applying a GIST index, the database could perform highly optimized bounding box intersections. This structural change replaced the full-table scans with indexed spatial lookups, shifting the query complexity from O(n) to sub-linear time. The map panning immediately became fluid, regardless of the underlying dataset size.
+I migrated the spatial queries to use PostGIS properly. I added a geometry column to the reports table and applied a GIST index, which lets the database do optimized bounding box intersections instead of scanning every row. The query complexity dropped from O(n) to sub-linear time, and map panning became fluid regardless of how many reports were in the system.
 
 ## Transactional integrity
 
-Managing hazard reports required strict data consistency. Deleting a single report meant removing associated comments, media attachments, and audit logs across 7 different tables. I wrapped these bulk operations in standard PostgreSQL transactions to enforce atomicity. If any step failed, the entire operation rolled back. I also implemented an audit logging system to track these administrative actions, ensuring complete visibility and data integrity without leaving orphaned records.
+Deleting a hazard report isn't just removing one row. Each report has associated comments, media attachments, and audit logs spread across 7 different tables. I wrapped these multi-table deletions in PostgreSQL transactions so the whole thing is atomic. If any step fails, everything rolls back. I also built an audit logging system to track administrative actions, so there's full visibility into what happened and when, without leaving behind orphaned records.

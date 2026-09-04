@@ -9,27 +9,33 @@ export interface ProjectDisplay {
 export const projectDisplay: Record<string, ProjectDisplay> = {
   yoink: {
     name: "Yoink",
-    hook: "Flash-sale engine rebuilt 4 times to kill race conditions under 1,000+ concurrent users.",
+    hook: "E-commerce backend that handles flash-sale inventory under 1,000+ concurrent users without overselling. Rebuilt 4 times.",
     metricValue: "7.6ms",
     metricLabel: "p95 latency",
   },
   oceanwatch: {
     name: "OceanWatch",
-    hook: "Replaced full-table scans with GIST-indexed PostGIS queries as report volume scaled.",
+    hook: "Full-stack geospatial platform for reporting coastal hazards in real time, built on Next.js, Express, and PostGIS.",
     metricValue: "O(n) to sub-linear",
     metricLabel: "query improvement",
   },
   spms: {
     name: "SPMS",
-    hook: "Cut a production dashboard's p95 latency 57% by parallelizing 20+ sequential queries.",
+    hook: "Internal tool at IIIT Pune for managing student projects. Took it to production and cut the dashboard p95 by 57%.",
     metricValue: "57%",
     metricLabel: "p95 reduction",
   },
   checkmate: {
     name: "Checkmate",
-    hook: "Two merged PRs on a 10k+ star monitoring tool: job-queue sync and status-resolution edge cases.",
+    hook: "Open-source contributor to a 10k+ star monitoring tool. Shipped bulk monitor management and custom status-code support.",
     metricValue: "10k+",
     metricLabel: "stars",
+  },
+  "vault-bomb": {
+    name: "Vault Bomb",
+    hook: "Decentralized dead-man's switch for evidence release, built on Arbitrum Stylus, Irys/Arweave, and Lit Protocol.",
+    metricValue: "3 layers",
+    metricLabel: "decentralized trust",
   },
 };
 

@@ -11,6 +11,7 @@ export interface WorkFrontmatter {
   date: string;
   stack: string[];
   github: string;
+  url?: string;
   metrics: { value: string; label: string }[];
   excerpt: string;
 }
@@ -61,7 +62,7 @@ function getContentFromDir<T>(subdir: string): ContentItem<T>[] {
 export function getAllWork(): ContentItem<WorkFrontmatter>[] {
   const items = getContentFromDir<WorkFrontmatter>("work");
   // Sort by a predefined order instead of date for work projects
-  const order = ["yoink", "oceanwatch", "spms", "checkmate"];
+  const order = ["yoink", "vault-bomb", "oceanwatch", "spms", "checkmate"];
   return items.sort(
     (a, b) => order.indexOf(a.slug) - order.indexOf(b.slug)
   );

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, GithubLogo } from "@phosphor-icons/react/dist/ssr";
+import { ArrowLeft, GithubLogo, Globe } from "@phosphor-icons/react/dist/ssr";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import rehypePrettyCode from "rehype-pretty-code";
 import { getAllWork, getWorkBySlug } from "@/lib/content";
@@ -60,17 +60,30 @@ export default async function WorkCaseStudy({
           <p className="font-mono text-[13px] text-text-tertiary">
             {frontmatter.stack.join(" / ")}
           </p>
-          {frontmatter.github && (
-            <a
-              href={frontmatter.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-text-secondary transition-colors duration-150 hover:text-white"
-            >
-              <GithubLogo size={24} />
-              Source
-            </a>
-          )}
+          <div className="flex items-center gap-6">
+            {frontmatter.github && (
+              <a
+                href={frontmatter.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-text-secondary transition-colors duration-150 hover:text-white"
+              >
+                <GithubLogo size={24} />
+                Source
+              </a>
+            )}
+            {frontmatter.url && (
+              <a
+                href={frontmatter.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-text-secondary transition-colors duration-150 hover:text-white"
+              >
+                <Globe size={24} />
+                Live Project
+              </a>
+            )}
+          </div>
         </header>
       </ScrollReveal>
 

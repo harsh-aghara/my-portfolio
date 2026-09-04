@@ -7,13 +7,17 @@ github: "https://github.com/bluewave-labs/checkmate"
 metrics:
   - { value: "2 PRs", label: "merged" }
   - { value: "10k+", label: "repo stars" }
-excerpt: "Two merged PRs on a 10k+ star monitoring tool: job-queue sync and status-resolution edge cases."
+excerpt: "Open-source contributor to Checkmate, a self-hosted server monitoring tool with 10k+ GitHub stars. I shipped two PRs: bulk monitor management and custom HTTP status-code support."
 ---
+
+## What this is
+
+Checkmate is an open-source, self-hosted monitoring tool that tracks server uptime, response times, hardware metrics, and incidents. It has over 10,000 stars on GitHub. I contributed two merged pull requests that added features to the monitor management and status-resolution systems.
 
 ## PR #3626: Bulk pause/resume for monitor fleets
 
-Managing large fleets of monitors required tedious individual toggling. I implemented a bulk pause/resume feature that orchestrates state changes across multiple monitors simultaneously. This involved writing BullMQ orchestration logic to safely pause active background jobs without dropping data. I built reusable React hooks for the frontend interface and validated the new REST endpoints. I also wrote comprehensive unit tests to ensure the job-queue synchronization recovered gracefully from partial-failure states.
+Before this change, pausing or resuming monitors had to be done one at a time. For users managing large fleets of monitors, that was tedious. I built a bulk pause/resume feature that coordinates state changes across multiple monitors simultaneously. On the backend, I wrote BullMQ orchestration logic to safely pause active background jobs without dropping data. On the frontend, I built reusable React hooks for the new bulk-action interface and validated the REST endpoints. I also wrote unit tests to make sure the job-queue synchronization handled partial-failure states correctly.
 
 ## PR #3690: Custom status-code support
 
-The existing status-resolution layer assumed any non-2xx HTTP response meant a service was down. I contributed custom status-code support, allowing users to configure specific HTTP monitors to treat codes like 401 (Unauthorized) or Cloudflare 52x errors as an UP status. This required modifying the core status-resolution logic across both HTTP and global-ping checks. I implemented strict Zod schema validation to handle the new configuration parameters and added unit tests to verify the edge cases.
+The existing status-resolution logic treated any non-2xx HTTP response as "service is down." That's not always true. A 401 (Unauthorized) from a protected endpoint doesn't mean the server is down, and Cloudflare 52x errors have their own meaning. I added custom status-code configuration so users can define which HTTP codes count as UP for specific monitors. This touched the core status-resolution logic across both HTTP and global-ping checks. I used Zod schema validation for the new configuration parameters and wrote unit tests for the edge cases around non-standard status codes.

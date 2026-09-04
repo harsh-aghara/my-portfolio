@@ -1,0 +1,46 @@
+---
+title: "Vault Bomb"
+subtitle: "Decentralized dead-man's switch for evidence release"
+date: "2026-09-01"
+stack: ["Rust", "Arbitrum Stylus", "React", "TypeScript", "Irys/Arweave", "Lit Protocol", "ethers.js"]
+github: "https://github.com/harsh-aghara/Vault_bomb"
+url: "https://vault-bomb.vercel.app"
+metrics:
+  - { value: "3 layers", label: "decentralized trust" }
+  - { value: "AES-256-GCM", label: "client-side encryption" }
+excerpt: "A decentralized dead-man's switch built on Arbitrum Stylus, Irys/Arweave, and Lit Protocol. If the owner goes silent, the evidence publishes itself."
+---
+
+## What this is
+
+Vault Bomb is a decentralized evidence-release protocol designed for whistleblowers, activists, and investigative journalists. The core idea is a dead-man's switch: you lock encrypted evidence into the system, and as long as you keep sending periodic heartbeat transactions, nothing happens. If you stop (because you've been detained, coerced, or worse), the system automatically decrypts and publishes the evidence without anyone being able to stop it.
+
+Traditional dead-man's switches rely on centralized servers or timed emails, which can be seized, subpoenaed, or shut down. Vault Bomb removes that single point of failure by splitting trust across three independent decentralized layers: on-chain state management (Arbitrum), permanent encrypted storage (Irys/Arweave), and decentralized key custody (Lit Protocol).
+
+## How it works
+
+The lifecycle of a vault has four phases:
+
+**Arming:** The owner encrypts evidence client-side using AES-256-GCM. No plaintext ever leaves the browser. The ciphertext goes to Irys/Arweave for permanent storage, and the decryption key gets escrowed in the Lit Protocol custody layer. A smart contract on Arbitrum registers the switch with a heartbeat window and an ETH bounty.
+
+**Monitoring:** The owner periodically calls a heartbeat function on the smart contract. Each call resets the timer. As long as heartbeats keep coming, the vault stays locked.
+
+**Trigger:** If the heartbeat deadline plus a grace period elapses without activity, anyone on the network can call the trigger function and claim the ETH bounty. This is intentional. MEV bots and watchers are economically incentivized to monitor for expired vaults, so the trigger is permissionless and doesn't depend on any single party.
+
+**Release:** Once triggered, the on-chain state is irreversible. The Lit Protocol custody layer verifies the triggered state, decrypts the ciphertext, and publishes the plaintext.
+
+## What I built
+
+I co-built this as part of a team, focusing on the frontend integration, the off-chain custody layer, and the smart contract deployment infrastructure.
+
+For the custody layer, I built the backend state persistence and reliability logic for the Lit Protocol Simulator (the off-chain MVP that holds the AES decryption keys). On the frontend, I built the React components and wired up the Web3 upload flow, integrating the client-side encryption with the Irys/Arweave decentralized storage network.
+
+I also handled the deployment infrastructure for the Arbitrum Stylus Rust contract. I fixed the ABI exports and configured the RPC endpoints in the deployment scripts so the compiled WASM contract could actually be shipped and executed on-chain.
+
+## Design decisions
+
+The system has a duress path: a secondary wallet can immediately trigger the release while looking like a normal heartbeat from the outside. This covers the scenario where someone is being coerced into keeping the switch alive.
+
+The timing logic uses L1 Ethereum block numbers instead of L2 timestamps. This is deliberate. L2 sequencers control their own timestamps, so relying on them would introduce a trust assumption we wanted to avoid.
+
+The bounty mechanism means the system doesn't need a dedicated operator to trigger releases. Anyone with a financial incentive (and that includes the entire MEV ecosystem) will watch for expired vaults. That's the whole point: removing any single party as a dependency.

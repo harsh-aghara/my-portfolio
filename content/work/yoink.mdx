@@ -9,52 +9,31 @@ metrics:
   - { value: "1,459 req/s", label: "peak throughput" }
   - { value: "0%", label: "error rate" }
   - { value: "99%", label: "latency reduction" }
-excerpt: "Flash-sale engine rebuilt 4 times to kill race conditions under 1,000+ concurrent users."
+excerpt: "A Node.js e-commerce backend that handles flash-sale inventory without overselling, even under 1,000+ concurrent users."
 ---
 
-## What flash sales break
+## What this is
 
-A flash sale tests system constraints in extreme ways. You drop a limited pool of inventory - say, 5,000 units - and unleash thousands of eager buyers simultaneously. The naive approach relies on direct PostgreSQL updates. The logic is simple: check if stock is greater than zero, then decrement the inventory. This looks fine in a local development environment or a low-traffic demo. At scale, it breaks completely. Thousands of concurrent requests hit the database, leading to immediate race conditions where multiple requests read the exact same stock count before any of them write the updated value.
+Yoink is a backend system I built to solve a specific problem: how do you sell a limited pool of inventory when thousands of users hit the buy button at the same millisecond? The short answer is that most approaches break, and I had to rebuild the architecture four times before landing on one that actually held up.
 
-## The baseline failure
+The whole thing is Dockerized with Prometheus and Grafana wired in for observability. I used k6 to run load tests across three phases (sustained load, spike, and stress) so every claim has numbers behind it.
 
-To understand the scale of the problem, I benchmarked the naive approach. With 5,000 units of stock under heavy concurrent load, the system produced 28,486 over-orders. That is a 469% inventory breach. The core issue was read-modify-write race conditions. Multiple threads fetched a stock value of 1, verified it was greater than 0, and then all proceeded to decrement it, pushing the actual stock well below zero.
+## The problem
 
-## Four iterations
+A flash sale drops a fixed amount of stock and opens it to everyone at once. The naive implementation reads the current stock count, checks if it's above zero, then decrements. Under concurrency, hundreds of requests read the same stock value before any of them write, so you end up selling way more than you have. My baseline benchmark produced 28,486 confirmed orders against 5,000 units of stock.
 
-Building a robust system required testing and discarding multiple architectures.
+## How I got to the final architecture
 
-### Iteration 1: PostgreSQL row-level locking
+I went through four iterations, each one fixing the previous bottleneck while exposing a new one.
 
-I implemented SELECT FOR UPDATE to serialize access to the inventory rows. This works perfectly under light load. However, when tested against a sudden burst of 1,000+ concurrent connections, the database connection pool exhausted rapidly. Transactions queued up, latency spiked, and the system ground to a halt.
+**PostgreSQL row-level locking** fixed the overselling but collapsed under 1,000+ concurrent connections because the connection pool couldn't keep up. **In-memory queuing** moved the bottleneck out of the database but broke as soon as I scaled to multiple Node.js instances. **Redis distributed locks** (Redlock) got close, but TTL edge cases under heavy load still produced a small number of over-orders.
 
-### Iteration 2: Application-level queuing
-
-Next, I moved the concurrency control to an in-memory queue inside Node.js. This shifted the bottleneck away from the database. The problem here was horizontal scalability. Once I spun up multiple Node.js instances to handle the traffic, the in-memory queues became isolated. Race conditions re-emerged across async boundaries and multiple application instances.
-
-### Iteration 3: Redis distributed locking
-
-To synchronize across instances, I implemented the Redlock pattern using Redis distributed locks. This reduced the number of over-orders significantly but did not eliminate them entirely. The complexity of managing Time-To-Live (TTL) for locks under heavy load introduced edge cases where locks expired before transactions completed.
-
-### Iteration 4: Redis Lua + BullMQ
-
-The final architecture moved the atomic check-and-decrement logic directly into Redis using Lua scripts. Because Redis executes Lua scripts atomically on a single thread, it guarantees no other operations run concurrently. A single round-trip validates inventory and updates it. To persist the data, I coupled this with BullMQ to asynchronously drain successful reservations to PostgreSQL.
-
-## The architecture that held
-
-Redis Lua scripts execute atomically within the single-threaded Redis runtime. This means one round-trip handles the entire transaction with a zero race window. Once Redis confirms the reservation, BullMQ workers pick up the successful order and write it to PostgreSQL asynchronously. The database never sees the burst traffic directly. If a write to PostgreSQL fails due to transient database issues, a Dead Letter Queue catches the failure for automatic retry, ensuring data eventual consistency without blocking the fast path.
-
-## Proving it
-
-I used k6 for rigorous performance testing. The methodology included three phases:
-- Load testing: Sustained 500 requests per second for 5 minutes.
-- Spike testing: Ramping from 0 to 1,000 requests per second in 10 seconds.
-- Stress testing: Pushing the system to 1,500 requests per second to find the breaking point.
+The version that stuck uses **Redis Lua scripts** for the atomic inventory check-and-decrement, combined with **BullMQ** to asynchronously persist orders to PostgreSQL. Redis handles the hot path in a single round-trip with zero race window. The database never sees the burst traffic directly. If a Postgres write fails, a Dead Letter Queue catches it and rolls the stock back into Redis automatically.
 
 ## Results
 
-The Redis Lua + BullMQ architecture cut p95 latency from 1,390ms down to 7.6ms. That represents a 99% latency reduction. The system sustained a peak throughput of 1,459 requests per second with a 0% error rate. The Dead Letter Queue self-healed failed database writes during stress tests. I monitored the entire pipeline using Prometheus and Grafana instrumentation deployed across 3 horizontally scaled instances.
+I benchmarked the final system with k6 across three test profiles: sustained 500 req/s for 5 minutes, a spike from 0 to 1,000 req/s in 10 seconds, and a stress test at 1,500 req/s. The p95 latency dropped from 1,390ms (the row-locking version) to 7.6ms. Peak throughput hit 1,459 req/s with a 0% error rate. The DLQ self-healed failed database writes during stress tests without manual intervention. Everything was monitored through Prometheus and Grafana across 3 horizontally scaled instances.
 
-## What I'd do differently
+## What I'd change
 
-If I were to build this again for production at a larger scale, I would implement Redis Cluster to support multi-region availability. I would also strictly separate the BullMQ worker pods from the API servers to prevent heavy background processing from impacting API response times. Finally, I would explore NATS JetStream as an alternative to BullMQ for potentially higher throughput message brokering.
+For a production deployment at larger scale, I'd set up Redis Cluster for multi-region availability. I'd also separate the BullMQ worker pods from the API servers so background processing doesn't eat into response times. And I'd look at NATS JetStream as a potential replacement for BullMQ for higher throughput message brokering.
